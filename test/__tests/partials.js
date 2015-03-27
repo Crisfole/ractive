@@ -322,6 +322,51 @@ test( 'Partial mustaches can be references or expressions that resolve to a part
 	t.htmlEqual( fixture.innerHTML, 'foobarfoobazfoo- b partialhello <div id="otherid"><h1>hello plain partial</h1></div>newted onTheFly:lazenby last4' );
 });
 
+test( 'Partials may have context', function( t ) {
+	new Ractive({
+		el: fixture,
+		template: '{{>test ctx}}',
+		data: {
+			ctx: { id: 1, expr: { id: 2 } },
+		},
+		partials: {
+			'test': 'id: {{id}}, expr.id: {{expr.id}}',
+		}
+	});
+
+	t.htmlEqual( fixture.innerHTML, 'id: 1, expr.id: 2');
+});
+
+test( 'Partials may have `this` for context', function( t ) {
+	new Ractive({
+		el: fixture,
+		template: '{{#with ctx}}{{>test this}}{{/with}}',
+		data: {
+			ctx: { id: 1, expr: { id: 2 } },
+		},
+		partials: {
+			'test': 'id: {{id}}, expr.id: {{expr.id}}',
+		}
+	});
+
+	t.htmlEqual( fixture.innerHTML, 'id: 1, expr.id: 2');
+});
+
+test( 'Partials may have `.` for context', function( t ) {
+	new Ractive({
+		el: fixture,
+		template: '{{#with ctx}}{{>test .}}{{/with}}',
+		data: {
+			ctx: { id: 1, expr: { id: 2 } },
+		},
+		partials: {
+			'test': 'id: {{id}}, expr.id: {{expr.id}}',
+		}
+	});
+
+	t.htmlEqual( fixture.innerHTML, 'id: 1, expr.id: 2');
+});
+
 test( 'Partials with expressions may also have context', function( t ) {
 	new Ractive({
 		el: fixture,
